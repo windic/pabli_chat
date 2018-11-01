@@ -8,11 +8,10 @@
             $file = fopen("last_message.txt", "w");
             fwrite($file, $message);
             fclose($file);
-            shell_exec("mosquitto_pub -h " . $IP_DEST . " -t e -m " . $message);
+            shell_exec("mosquitto_pub -h " . $IP_DEST . " -t e -m \"" . $message . "\"");
         } else {
             $error = true;
         }
-        $lastMessage = file("last_message.txt")[0];
     }
 ?>
 <!doctype html>
@@ -30,7 +29,7 @@
     <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/css/main.css">
 
-    <title>Projectos Uja</title>
+    <title>Pabli Chat</title>
 
     <!-- Optional JavaScript -->
     <script src="assets/vendor/jquery/jquery-3.3.1.min.js"></script>
@@ -99,7 +98,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <?php echo $lastMessage ?>
+                    <span id="lastMessageText"></span>
                 </div>
                 <div class="modal-footer">
                 </div>
@@ -112,6 +111,21 @@
         setTimeout(() => {
             $(".alert").alert('close')
         }, 2500);
+        $('#lastMessageModal').on('show.bs.modal', function (e) {
+            readLastMessage()
+        })
+
+        /**
+         * Read the file message when the modal its opened
+         */
+        function readLastMessage() {
+            $.ajax({
+                url: "last_message.txt",
+                success: function (data){
+                    $("#lastMessageText").text(data)
+                }
+            });
+        }
     </script>
 </body>
 </html>
